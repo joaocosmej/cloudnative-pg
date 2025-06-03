@@ -403,11 +403,11 @@ func (e *Exporter) collectPgMetrics(ch chan<- prometheus.Metric) {
 		// getting the first point of recoverability
 		e.collectFromPrimaryFirstPointOnTimeRecovery()
 
-		// getting the last available backup timestamp
-		e.collectFromPrimaryLastAvailableBackupTimestamp()
-
-		e.collectFromPrimaryLastFailedBackupTimestamp()
 	}
+
+	// getting the last available backup timestamp
+	e.collectLastAvailableBackupTimestamp()
+	e.collectLastFailedBackupTimestamp()
 
 	if err := collectPGWalArchiveMetric(e); err != nil {
 		log.Error(err, "while collecting WAL archive metrics", "path", specs.PgWalArchiveStatusPath)
@@ -503,14 +503,14 @@ func (e *Exporter) collectNodesUsed() {
 	e.Metrics.NodesUsed.Set(float64(cluster.Status.Topology.NodesUsed))
 }
 
-func (e *Exporter) collectFromPrimaryLastFailedBackupTimestamp() {
+func (e *Exporter) collectLastFailedBackupTimestamp() {
 	const errorLabel = "Collect.LastFailedBackupTimestamp"
 	e.setTimestampMetric(e.Metrics.LastFailedBackupTimestamp, errorLabel, func(cluster *apiv1.Cluster) string {
 		return cluster.Status.LastFailedBackup
 	})
 }
 
-func (e *Exporter) collectFromPrimaryLastAvailableBackupTimestamp() {
+func (e *Exporter) collectLastAvailableBackupTimestamp() {
 	const errorLabel = "Collect.LastAvailableBackupTimestamp"
 	e.setTimestampMetric(e.Metrics.LastAvailableBackupTimestamp, errorLabel, func(cluster *apiv1.Cluster) string {
 		return cluster.Status.LastSuccessfulBackup
