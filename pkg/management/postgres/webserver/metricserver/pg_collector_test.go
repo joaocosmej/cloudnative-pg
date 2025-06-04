@@ -78,8 +78,8 @@ var _ = Describe("test metrics parsing", func() {
 			return cluster, nil
 		}
 		exporter.collectFromPrimaryFirstPointOnTimeRecovery()
-		exporter.collectFromPrimaryLastAvailableBackupTimestamp()
-		exporter.collectFromPrimaryLastFailedBackupTimestamp()
+		exporter.collectLastAvailableBackupTimestamp()
+		exporter.collectLastFailedBackupTimestamp()
 
 		registry := prometheus.NewRegistry()
 		registry.MustRegister(exporter.Metrics.FirstRecoverabilityPoint)
